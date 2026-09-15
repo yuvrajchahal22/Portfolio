@@ -34,36 +34,6 @@ python3 -m http.server 8000
 Any static server works. Opening `index.html` from the filesystem does **not** — the
 planet is an ES module and browsers refuse module imports over `file://`.
 
-## Deploy
-
-**Step-by-step instructions — GitHub, then Cloudflare Pages — are in [DEPLOY.md](DEPLOY.md).**
-The summary:
-
-
-Upload the contents of `site/` to any static host (GitHub Pages, Netlify, Cloudflare Pages,
-Vercel). All paths are relative, so it works at a domain root or under a sub-path.
-
-**Deploy exactly the contents of `site/` and nothing else.** The rest of this repo — the
-design archive, `legacy/`, `prototypes/`, `content/` and the briefs — must not be published.
-
-- **Netlify / Cloudflare Pages (recommended):** publish directory = `site`, no build command.
-  Only that directory is uploaded. Both also read a `_headers` file placed inside it.
-- **GitHub Pages:** branch-based Pages can only serve from `/` (root) or `/docs` — it cannot
-  serve `site/`. Either rename `site/` to `docs/` and select `/docs`, or use a Pages GitHub
-  Actions workflow with the `site` directory as the upload artifact. Note that GitHub Pages
-  cannot set HTTP headers at all (no CSP, no HSTS); a `<meta http-equiv>` CSP is the only option.
-
-## Things you will want to change
-
-| What | Where |
-| --- | --- |
-| Resume PDF | replace `site/uploads/YuvrajChahalResume.pdf` (keep the name, or update the 8 links) |
-| Portrait photo | `site/about.html` — the `.portrait` block has a placeholder; drop an `<img>` in it |
-| Co-op availability text | the `.pill` in `site/index.html` and `site/about.html` |
-| Email / LinkedIn | search `ysc27@sfu.ca` and `linkedin.com/in/yuvrajchahal` |
-| Colours | `:root` tokens at the top of `site/assets/css/site.css` |
-| Planet palette / lighting | `PALETTE` at the top of `site/assets/jupiter/shader.js` |
-| Planet framing / scroll feel | `framing()` and the lerps in `site/assets/jupiter/scroll.js` |
 
 ## How the planet behaves
 
