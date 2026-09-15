@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mecanum Wheel Robot · Yuvraj Chahal</title>
+<meta name="description" content="An omnidirectional robot built from scratch on an ESP32 — ultrasonic obstacle sensing, PID route-following, and full wireless Bluetooth control.">
+<meta name="theme-color" content="#0F0906">
+<meta property="og:title" content="Mecanum Wheel Robot · Yuvraj Chahal">
+<meta property="og:description" content="An omnidirectional robot built from scratch on an ESP32 — ultrasonic obstacle sensing, PID route-following, and full wireless Bluetooth control.">
+<meta property="og:type" content="website">
+<!-- og:image must be an absolute URL once deployed, e.g. https://yourdomain/assets/og.jpg -->
+<meta property="og:image" content="assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="assets/css/site.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body class="page-project">
+<a class="sr-only skip-link" href="#main">Skip to content</a>
+
+<div class="jupiter-stage" aria-hidden="true">
+  <canvas class="jupiter" role="presentation" aria-hidden="true"></canvas>
+  <div class="jupiter-fallback"></div>
+  <div class="veil"></div>
+  <div class="bleed"></div>
+  <div class="grain"></div>
+</div>
+
+<div class="page">
+
+  <header class="nav">
+    <a href="index.html" class="nav__brand" data-nav>
+      <span class="nav__mark"></span>
+      Yuvraj Chahal
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="index.html#projects" class="link" data-nav><span aria-hidden="true">← </span>All projects</a>
+      <a href="about.html" class="link link--hide-sm" data-nav>About</a>
+      <a href="uploads/YuvrajChahalResume.pdf" download class="btn btn--primary btn--sm">Resume <span aria-hidden="true">↓</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ================= HERO ================= -->
+    <section class="phero wrap" aria-labelledby="title" data-rail="Intro">
+      <div class="phero__meta">
+        <span class="eyebrow num">Project 02 / 06</span>
+        <span class="chip">In progress</span>
+      </div>
+      <h1 id="title" class="display phero__title">Mecanum<br>Wheel Robot</h1>
+      <p class="lede phero__lede">
+        An omnidirectional robot built from scratch on an ESP32 — ultrasonic obstacle sensing, PID route-following, and full wireless Bluetooth control.
+      </p>
+      <div class="meta">
+        <div>
+          <div class="meta__key">Year</div>
+          <div class="meta__val">May 2026 — Present</div>
+        </div>
+        <div>
+          <div class="meta__key">Context</div>
+          <div class="meta__val">Personal project</div>
+        </div>
+        <div>
+          <div class="meta__key">Role</div>
+          <div class="meta__val">Everything</div>
+        </div>
+        <div>
+          <div class="meta__key">Stack</div>
+          <div class="meta__val">ESP32 · C++ · PID</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FIGURE ================= -->
+    <section class="wrap reveal" data-rail="Diagram">
+      <div class="band">
+        <svg viewBox="0 0 1400 440" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+        <line x1="0" y1="110" x2="1400" y2="110" stroke="rgba(242,237,228,.05)"/>
+        <line x1="0" y1="220" x2="1400" y2="220" stroke="rgba(242,237,228,.05)"/>
+        <line x1="0" y1="330" x2="1400" y2="330" stroke="rgba(242,237,228,.05)"/>
+        <line x1="280" y1="0" x2="280" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <line x1="560" y1="0" x2="560" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <line x1="840" y1="0" x2="840" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <line x1="1120" y1="0" x2="1120" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <rect x="620" y="160" width="160" height="180" fill="none" stroke="#E0A756" stroke-width="2.5"/>
+        <rect x="578" y="168" width="30" height="58" fill="none" stroke="rgba(242,237,228,.55)" stroke-width="2"/>
+        <rect x="792" y="168" width="30" height="58" fill="none" stroke="rgba(242,237,228,.55)" stroke-width="2"/>
+        <rect x="578" y="274" width="30" height="58" fill="none" stroke="rgba(242,237,228,.55)" stroke-width="2"/>
+        <rect x="792" y="274" width="30" height="58" fill="none" stroke="rgba(242,237,228,.55)" stroke-width="2"/>
+        <line x1="582" y1="180" x2="604" y2="196" stroke="rgba(242,237,228,.5)" stroke-width="1.5"/>
+        <line x1="582" y1="198" x2="604" y2="214" stroke="rgba(242,237,228,.5)" stroke-width="1.5"/>
+        <line x1="796" y1="196" x2="818" y2="180" stroke="rgba(242,237,228,.5)" stroke-width="1.5"/>
+        <line x1="796" y1="214" x2="818" y2="198" stroke="rgba(242,237,228,.5)" stroke-width="1.5"/>
+        <line x1="582" y1="286" x2="604" y2="302" stroke="rgba(242,237,228,.5)" stroke-width="1.5"/>
+        <line x1="582" y1="304" x2="604" y2="320" stroke="rgba(242,237,228,.5)" stroke-width="1.5"/>
+        <line x1="796" y1="302" x2="818" y2="286" stroke="rgba(242,237,228,.5)" stroke-width="1.5"/>
+        <line x1="796" y1="320" x2="818" y2="304" stroke="rgba(242,237,228,.5)" stroke-width="1.5"/>
+        <circle cx="700" cy="160" r="46" fill="none" stroke="rgba(224,167,86,.5)" stroke-width="1.5" stroke-dasharray="5 6"/>
+        <circle cx="700" cy="160" r="86" fill="none" stroke="rgba(224,167,86,.3)" stroke-width="1.5" stroke-dasharray="5 9"/>
+        <circle cx="700" cy="160" r="130" fill="none" stroke="rgba(224,167,86,.15)" stroke-width="1.5" stroke-dasharray="5 12"/>
+        <circle cx="700" cy="250" r="6" fill="#E0A756"/>
+        <line x1="240" y1="250" x2="596" y2="250" stroke="rgba(224,167,86,.35)" stroke-width="1.5" stroke-dasharray="7 7"/>
+        <line x1="240" y1="250" x2="240" y2="120" stroke="rgba(224,167,86,.35)" stroke-width="1.5" stroke-dasharray="7 7"/>
+        <circle cx="240" cy="120" r="5" fill="none" stroke="#E0A756" stroke-width="2"/>
+        <line x1="804" y1="250" x2="1160" y2="250" stroke="rgba(224,167,86,.35)" stroke-width="1.5" stroke-dasharray="7 7"/>
+        <line x1="1160" y1="250" x2="1160" y2="360" stroke="rgba(224,167,86,.35)" stroke-width="1.5" stroke-dasharray="7 7"/>
+        <circle cx="1160" cy="360" r="5" fill="none" stroke="#E0A756" stroke-width="2"/>
+        </svg>
+        <div class="band__cap">Fig. 02 — Top view · Ultrasonic field &amp; planned route</div>
+        <div class="band__tag">4× Mecanum · ESP32 core</div>
+      </div>
+    </section>
+
+    <!-- ================= CONTENT ================= -->
+    <section class="section wrap" data-rail="Detail">
+
+      <div class="block reveal">
+        <h2 class="eyebrow eyebrow--accent eyebrow--dash">Overview</h2>
+        <div class="prose">
+          <p>Mecanum wheels let a robot translate in any direction and rotate in place — but only if all four motors are coordinated precisely. This build is my end-to-end exercise in that coordination: motor drivers, sensor fusion, and a control loop tight enough that the robot can follow a route with no human input.</p>
+        </div>
+      </div>
+
+      <div class="block reveal">
+        <h2 class="eyebrow eyebrow--accent eyebrow--dash">What I'm building</h2>
+        <div class="features">
+          <div class="feature">
+            <span class="feature__num">01</span>
+            <div>
+              <h3 class="feature__title">Real-time obstacle sensing</h3>
+              <p class="feature__body">Ultrasonic detection runs continuously alongside drive control, so the robot reacts to obstacles mid-manoeuvre instead of between moves.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature__num">02</span>
+            <div>
+              <h3 class="feature__title">PID route-following</h3>
+              <p class="feature__body">A PID control loop keeps the robot on its planned path autonomously — stable closed-loop navigation that holds course independent of manual input.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature__num">03</span>
+            <div>
+              <h3 class="feature__title">Firmware &amp; wireless control</h3>
+              <p class="feature__body">Motor drivers and sensor-fusion routines written in C++ on the ESP32, with a Bluetooth serial command protocol for full remote operation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block reveal">
+        <h2 class="eyebrow eyebrow--accent eyebrow--dash">Stack</h2>
+        <div class="chips">
+          <span class="chip">ESP32</span>
+          <span class="chip">C++</span>
+          <span class="chip">PID control</span>
+          <span class="chip">Ultrasonic sensors</span>
+          <span class="chip">Bluetooth serial</span>
+          <span class="chip">Sensor fusion</span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= NEXT ================= -->
+  <footer class="next wrap" data-rail="Next">
+    <a class="next__link" data-nav href="project-upsolve.html">
+      <span>
+        <span class="eyebrow num">Next project — 03</span>
+        <span class="next__title">Upsolve.io</span>
+      </span>
+      <span class="next__arrow" aria-hidden="true">→</span>
+    </a>
+  </footer>
+
+</div>
+
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>

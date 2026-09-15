@@ -1,0 +1,444 @@
+<title>Jovian Atmosphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ground:#0B0C0E; --panel:#0D0F11; --ink:#E9ECEA; --dim:#98A0A6;
+    --faint:#5E666D; --accent:#6FD9E8; --rule:rgba(233,236,234,.12);
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:'Space Grotesk',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--sans);
+       padding-inline:clamp(16px,4vw,44px);padding-block:0;margin:0}
+  .wrap{max-width:1180px;margin:0 auto}
+
+  header{padding-block:clamp(26px,5vw,46px) 20px;display:flex;flex-wrap:wrap;
+         gap:18px 32px;align-items:flex-end;justify-content:space-between}
+  h1{font-size:clamp(30px,5vw,52px);font-weight:700;letter-spacing:-.03em;margin:0;
+     line-height:1;text-wrap:balance}
+  .dek{color:var(--dim);font-size:15px;line-height:1.55;margin:12px 0 0;max-width:58ch}
+  .stamp{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--faint);
+         text-align:right;line-height:1.9}
+  .stamp b{color:var(--accent);font-weight:500}
+
+  .stage{position:relative;border:1px solid var(--rule);background:#08090B;
+         height:clamp(400px,68vh,660px);overflow:hidden;touch-action:none}
+  canvas{display:block;width:100%;height:100%;cursor:grab;outline:none}
+  canvas:active{cursor:grabbing}
+  canvas:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+  .telemetry{position:absolute;left:16px;bottom:16px;font-family:var(--mono);font-size:11px;
+             letter-spacing:.1em;color:var(--faint);background:rgba(11,12,14,.72);
+             backdrop-filter:blur(8px);border:1px solid var(--rule);padding:12px 14px;
+             display:grid;grid-template-columns:auto auto;gap:5px 18px;
+             font-variant-numeric:tabular-nums;pointer-events:none;max-width:calc(100% - 32px)}
+  .telemetry b{color:var(--ink);font-weight:500;text-align:right}
+  .telemetry .hl{color:var(--accent)}
+  .hint{position:absolute;right:16px;top:16px;font-family:var(--mono);font-size:10px;
+        letter-spacing:.14em;color:var(--faint);pointer-events:none;text-align:right;line-height:1.8}
+  .fail{position:absolute;inset:0;display:none;place-items:center;font-family:var(--mono);
+        font-size:12px;letter-spacing:.12em;color:var(--faint);text-align:center;padding:24px}
+
+  .controls{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;
+            border:1px solid var(--rule);border-top:none;padding:14px 16px;background:var(--panel)}
+  .ctl{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;
+       letter-spacing:.12em;color:var(--faint)}
+  .ctl input[type=range]{width:150px;accent-color:var(--accent);background:transparent}
+  .ctl input[type=checkbox]{accent-color:var(--accent);width:14px;height:14px}
+  .ctl label{cursor:pointer;color:var(--faint)}
+  .ctl input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .reset{font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:6px 12px;
+         background:transparent;color:var(--faint);border:1px solid var(--rule);cursor:pointer}
+  .reset:hover{color:var(--accent);border-color:var(--accent)}
+  .reset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));
+         gap:28px 40px;padding-block:44px 16px}
+  .notes h2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--accent);
+            margin:0 0 10px;font-weight:500}
+  .notes p{margin:0;color:var(--dim);font-size:14px;line-height:1.65}
+  .notes .k{color:var(--ink)}
+
+  .math{border-top:1px solid var(--rule);margin-top:28px;padding-block:28px 56px}
+  .math h2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--faint);
+           margin:0 0 16px;font-weight:500}
+  .math p{color:var(--faint);font-size:12.5px;font-family:var(--mono);letter-spacing:.06em;
+          line-height:1.9;margin:0 0 14px;max-width:76ch}
+  .math p b{color:var(--ink);font-weight:500}
+  .math p.warn{color:var(--dim)}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Jovian Atmosphere</h1>
+      <p class="dek">A gas giant rendered from nothing but math — no texture maps, no image
+        assets. Turbulence sheared by Jupiter's measured zonal-wind profile, so the bands
+        pull themselves apart along the real jet boundaries. Drag to orbit, scroll to zoom.</p>
+    </div>
+    <div class="stamp">
+      BODY <b>JUPITER</b><br>
+      R<sub>eq</sub> 69 911 km · f 0.0649<br>
+      RENDER <b>WEBGL / PROCEDURAL</b>
+    </div>
+  </header>
+
+  <div class="stage">
+    <canvas id="sky" tabindex="0" role="img"
+      aria-label="Interactive simulation of Jupiter. A banded gas giant rotates, with turbulent cloud filaments stretched along its zonal jets and the Great Red Spot visible in the southern hemisphere. Drag or use arrow keys to orbit, scroll or use plus and minus to zoom."></canvas>
+    <div class="hint">DRAG TO ORBIT<br>SCROLL TO ZOOM</div>
+    <div class="telemetry" id="telemetry"></div>
+    <div class="fail" id="fail">WEBGL UNAVAILABLE — this simulation needs hardware rendering.</div>
+  </div>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="zoom">ZOOM</label>
+      <input type="range" id="zoom" min="0" max="100" value="0" step="0.5">
+    </div>
+    <div class="ctl"><input type="checkbox" id="grid"><label for="grid">GRATICULE</label></div>
+    <div class="ctl"><input type="checkbox" id="grs" checked><label for="grs">GREAT RED SPOT</label></div>
+    <div class="ctl"><input type="checkbox" id="light" checked><label for="light">SUNLIGHT</label></div>
+    <button type="button" class="reset" id="reset">RESET VIEW</button>
+  </div>
+
+  <div class="notes">
+    <div>
+      <h2>ZONAL JETS</h2>
+      <p>Jupiter's winds run in <span class="k">alternating bands</span> — prograde at the
+        equator near 150 m/s, reversing every few degrees of latitude. That measured profile
+        drives the shear here, which is why filaments stretch sideways and tear at the belt
+        edges instead of drifting as a uniform sheet.</p>
+    </div>
+    <div>
+      <h2>DIFFERENTIAL ROTATION</h2>
+      <p>The equator laps the mid-latitudes. System&nbsp;I (±10°) turns in
+        <span class="k">9h 50m 30s</span>, System&nbsp;II outside that in
+        <span class="k">9h 55m 41s</span>. Because each latitude is rotated by its own rate,
+        the bands visibly slide past one another over time.</p>
+    </div>
+    <div>
+      <h2>THE GREAT RED SPOT</h2>
+      <p>An anticyclone at <span class="k">22°S</span>, wider than Earth, drifting slowly
+        westward. Sample coordinates are rotated by an angle that falls off with distance
+        from its centre, which is what produces the spiral rather than a painted oval.</p>
+    </div>
+    <div>
+      <h2>OBLATENESS</h2>
+      <p>It is not a sphere. Rapid rotation flattens Jupiter by
+        <span class="k">6.5%</span> — the polar radius is 4 600 km shorter than the
+        equatorial. The ray intersection uses the real ellipsoid, so the silhouette is
+        correctly squashed.</p>
+    </div>
+  </div>
+
+  <div class="math">
+    <h2>WHAT THIS IS, AND WHAT IT ISN'T</h2>
+    <p><b>Real:</b> the zonal-wind profile, differential rotation rates, oblateness,
+      the Great Red Spot's latitude and drift, limb darkening, and the terminator.
+      Every pixel is a ray traced against an ellipsoid and shaded from those quantities.</p>
+    <p class="warn"><b>Not real:</b> this is <b>not</b> a Navier–Stokes solve. The clouds are
+      domain-warped fractal noise advected by the wind profile — a simulation of how the
+      atmosphere <b>looks</b>, not of the fluid itself. A true GCM would not run at 60fps in
+      a browser tab. Worth saying plainly, because the difference matters if anyone asks.</p>
+    <p><b>Why it zooms:</b> detail is generated, never sampled. Octave count rises as the
+      field of view narrows, so new structure appears instead of a texture going soft.
+      A texture-mapped Earth cannot do this at any file size.</p>
+  </div>
+</div>
+
+<script id="fs" type="x-shader/x-fragment">
+#extension GL_OES_standard_derivatives : enable
+precision highp float;
+
+uniform vec2  uRes;
+uniform float uTime, uFov, uSpin, uGrid, uGRS, uLight, uOct;
+uniform vec2  uView;
+
+const float PI  = 3.14159265359;
+const float D   = 3.6;
+const vec3  RAD = vec3(1.0, 0.9351, 1.0);
+
+float hash(vec3 p){
+  p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
+  p *= 17.0;
+  return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+}
+float vnoise(vec3 x){
+  vec3 i = floor(x), f = fract(x);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(mix(hash(i + vec3(0.0,0.0,0.0)), hash(i + vec3(1.0,0.0,0.0)), f.x),
+                 mix(hash(i + vec3(0.0,1.0,0.0)), hash(i + vec3(1.0,1.0,0.0)), f.x), f.y),
+             mix(mix(hash(i + vec3(0.0,0.0,1.0)), hash(i + vec3(1.0,0.0,1.0)), f.x),
+                 mix(hash(i + vec3(0.0,1.0,1.0)), hash(i + vec3(1.0,1.0,1.0)), f.x), f.y), f.z);
+}
+float fbm(vec3 p, float oct){
+  float s = 0.0, a = 0.5, n = 0.0;
+  for (int i = 0; i < 10; i++){
+    if (float(i) >= oct) break;
+    s += a * vnoise(p); n += a; p *= 2.03; a *= 0.5;
+  }
+  return s / max(n, 1e-4);
+}
+mat3 rotY(float t){ float c = cos(t), s = sin(t); return mat3(c,0.0,-s, 0.0,1.0,0.0, s,0.0,c); }
+
+// Measured zonal wind, normalised. Prograde equatorial jet, alternating beyond.
+float jets(float d){
+  float a = abs(d);
+  return  1.00 * exp(-pow(d / 9.5, 2.0))
+        - 0.52 * exp(-pow((a - 17.0) / 5.5, 2.0))
+        + 0.46 * exp(-pow((a - 25.0) / 5.0, 2.0))
+        - 0.34 * exp(-pow((a - 35.0) / 6.0, 2.0))
+        + 0.27 * exp(-pow((a - 45.0) / 6.5, 2.0))
+        - 0.20 * exp(-pow((a - 56.0) / 7.5, 2.0))
+        + 0.13 * exp(-pow((a - 67.0) / 8.0, 2.0));
+}
+// Belt / zone albedo structure.
+float bands(float d){
+  float a = abs(d);
+  float b = 0.50 + 0.30 * jets(d);
+  b += 0.17 * exp(-pow(d / 6.0, 2.0));
+  b -= 0.30 * exp(-pow((d - 16.5) / 5.0, 2.0));
+  b -= 0.27 * exp(-pow((d + 16.0) / 5.5, 2.0));
+  b -= 0.20 * smoothstep(58.0, 86.0, a);
+  return b;
+}
+
+void main(){
+  vec2 uv = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;
+  vec3 bg = vec3(0.043, 0.047, 0.055);
+
+  float cl = uView.x, cn = uView.y;
+  vec3 ro = D * vec3(cos(cl) * sin(cn), sin(cl), cos(cl) * cos(cn));
+  vec3 fw = normalize(-ro);
+  vec3 rt = normalize(cross(vec3(0.0, 1.0, 0.0), fw));
+  vec3 up = cross(fw, rt);
+  vec3 rd = normalize(fw / tan(uFov * 0.5) + rt * uv.x + up * uv.y);
+
+  vec3 o = ro / RAD, dr = rd / RAD;
+  float A = dot(dr, dr), B = dot(o, dr), C = dot(o, o) - 1.0;
+  float h = B * B - A * C;
+  if (h < 0.0){ gl_FragColor = vec4(bg, 1.0); return; }
+
+  vec3 p  = ro + rd * ((-B - sqrt(h)) / A);
+  vec3 n  = normalize(p / (RAD * RAD));
+  vec3 q  = normalize(p / RAD);
+  vec3 qr = rotY(-uSpin) * q;
+
+  float lat = asin(clamp(qr.y, -1.0, 1.0));
+  float lon = atan(qr.z, qr.x);
+  float dLat = degrees(lat);
+
+  vec3  qs = rotY(jets(dLat) * uTime * 0.085) * qr;
+  float w  = fbm(qs * 2.6 + vec3(0.0, uTime * 0.008, 0.0), min(uOct, 5.0));
+  vec3  qw = qs + (w - 0.5) * 0.34 * vec3(1.0, 0.30, 1.0);
+  float d  = fbm(vec3(qw.x, qw.y * 3.4, qw.z) * 5.0, uOct);
+
+  float t = bands(dLat) + (d - 0.5) * 0.44;
+
+  vec3 c = mix(vec3(0.24,0.155,0.115), vec3(0.44,0.285,0.195), smoothstep(0.02, 0.36, t));
+  c = mix(c, vec3(0.80,0.705,0.545), smoothstep(0.30, 0.68, t));
+  c = mix(c, vec3(0.955,0.925,0.845), smoothstep(0.70, 0.96, t));
+
+  if (uGRS > 0.5){
+    float gLon = radians(-75.0) - uTime * 0.010;
+    float dl = mod(lon - gLon + PI, 2.0 * PI) - PI;
+    vec2  g  = vec2(dl * cos(lat) / radians(12.5), (lat - radians(-22.0)) / radians(7.5));
+    float r  = length(g);
+    float m  = smoothstep(1.22, 0.42, r);
+    if (m > 0.002){
+      float ang = atan(g.y, g.x) + (1.3 - min(r, 1.3)) * 2.7 + uTime * 0.28;
+      vec2  gs  = vec2(cos(ang), sin(ang)) * r;
+      float gn  = fbm(vec3(gs * 3.2, 5.0), min(uOct, 7.0));
+      vec3  gc  = mix(vec3(0.50,0.205,0.145), vec3(0.86,0.545,0.375), gn);
+      gc = mix(gc, vec3(0.93,0.84,0.70), smoothstep(0.92, 1.18, r) * 0.75);
+      c = mix(c, gc, m);
+    }
+  }
+
+  float mu = max(dot(n, -rd), 0.0);
+  if (uLight > 0.5){
+    vec3  L   = normalize(vec3(0.74, 0.17, 0.65));
+    float day = smoothstep(-0.13, 0.32, dot(n, L));
+    c *= mix(0.030, 1.0, day) * mix(0.52, 1.0, pow(mu, 0.42));
+    c += vec3(0.50, 0.60, 0.72) * pow(1.0 - mu, 5.0) * day * 0.15;
+  } else {
+    c *= mix(0.78, 1.0, pow(mu, 0.30));
+  }
+
+  if (uGrid > 0.5){
+    float wd = max(0.10, degrees(uFov) * 0.016);
+    float gl = 1.0 - smoothstep(0.0, wd, abs(mod(dLat + 7.5, 15.0) - 7.5));
+    float gn = 1.0 - smoothstep(0.0, wd / max(cos(lat), 0.12),
+                                abs(mod(degrees(lon) + 7.5, 15.0) - 7.5));
+    float eq = 1.0 - smoothstep(0.0, wd * 1.7, abs(dLat));
+    c = mix(c, vec3(0.435, 0.851, 0.910),
+            clamp(max(max(gl, gn), eq), 0.0, 1.0) * (0.20 + 0.34 * eq) * mu);
+  }
+
+  gl_FragColor = vec4(pow(clamp(c, 0.0, 1.0), vec3(0.95)), 1.0);
+}
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var cv = document.getElementById('sky'), tel = document.getElementById('telemetry');
+  var gl = cv.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'high-performance' })
+        || cv.getContext('experimental-webgl');
+  if (!gl) { document.getElementById('fail').style.display = 'grid'; return; }
+  gl.getExtension('OES_standard_derivatives');
+
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var RJ = 69911, BASE_FOV = 44, D = 3.6;
+  var view = { lat: 0.06, lon: 0.0 }, spin = 0, zoom = 1, sim = 0, raf = 0, last = 0;
+  var opts = { grid: false, grs: true, light: true };
+
+  function compile(type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+    return s;
+  }
+  var prog = gl.createProgram();
+  try {
+    gl.attachShader(prog, compile(gl.VERTEX_SHADER,
+      'attribute vec2 a;void main(){gl_Position=vec4(a,0.0,1.0);}'));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, document.getElementById('fs').textContent));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+  } catch (e) {
+    document.getElementById('fail').style.display = 'grid';
+    document.getElementById('fail').textContent = 'SHADER ERROR — ' + e.message;
+    return;
+  }
+  gl.useProgram(prog);
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  var loc = gl.getAttribLocation(prog, 'a');
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+  var U = {};
+  ['uRes','uTime','uFov','uSpin','uGrid','uGRS','uLight','uOct','uView'].forEach(function (k) {
+    U[k] = gl.getUniformLocation(prog, k);
+  });
+
+  var W = 0, H = 0;
+  function resize() {
+    var r = cv.getBoundingClientRect();
+    var dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    W = Math.max(1, Math.round(r.width * dpr));
+    H = Math.max(1, Math.round(r.height * dpr));
+    cv.width = W; cv.height = H;
+    gl.viewport(0, 0, W, H);
+    render();
+  }
+
+  function fovDeg() { return BASE_FOV / zoom; }
+
+  function render() {
+    var f = fovDeg() * Math.PI / 180;
+    gl.uniform2f(U.uRes, W, H);
+    gl.uniform1f(U.uTime, sim);
+    gl.uniform1f(U.uFov, f);
+    gl.uniform1f(U.uSpin, spin);
+    gl.uniform1f(U.uGrid, opts.grid ? 1 : 0);
+    gl.uniform1f(U.uGRS, opts.grs ? 1 : 0);
+    gl.uniform1f(U.uLight, opts.light ? 1 : 0);
+    gl.uniform1f(U.uOct, Math.min(10, 6 + Math.log(zoom) / Math.LN2 * 0.72));
+    gl.uniform2f(U.uView, view.lat, view.lon);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    var field = 2 * Math.tan(f / 2) * (D - 1) * RJ;
+    var wind = Math.round(jets(view.lat * 180 / Math.PI) * 148);
+    tel.innerHTML =
+      'SUB-S/C LAT<b class="hl">' + (view.lat * 180 / Math.PI).toFixed(1) + '°</b>' +
+      'FIELD<b>' + (field >= 1000 ? (field / 1000).toFixed(1) + ' ×10³ km' : Math.round(field) + ' km') + '</b>' +
+      'ZOOM<b>' + zoom.toFixed(1) + '×</b>' +
+      'ZONAL WIND<b>' + (wind >= 0 ? '+' : '') + wind + ' m/s</b>' +
+      'ROT PERIOD<b>' + (Math.abs(view.lat * 180 / Math.PI) < 10 ? '9h 50m 30s' : '9h 55m 41s') + '</b>';
+  }
+
+  function jets(d) {
+    var a = Math.abs(d), e = Math.exp;
+    return  1.00 * e(-Math.pow(d / 9.5, 2))
+          - 0.52 * e(-Math.pow((a - 17) / 5.5, 2))
+          + 0.46 * e(-Math.pow((a - 25) / 5.0, 2))
+          - 0.34 * e(-Math.pow((a - 35) / 6.0, 2))
+          + 0.27 * e(-Math.pow((a - 45) / 6.5, 2))
+          - 0.20 * e(-Math.pow((a - 56) / 7.5, 2))
+          + 0.13 * e(-Math.pow((a - 67) / 8.0, 2));
+  }
+
+  function frame(now) {
+    var dt = Math.min(0.05, (now - last) / 1000); last = now;
+    spin += dt * 0.114;          // one rotation ~55s
+    sim  += dt;
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+  function start() { if (!raf && !reduce) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+  function stop()  { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+
+  var drag = false, px = 0, py = 0;
+  cv.addEventListener('pointerdown', function (e) {
+    drag = true; px = e.clientX; py = e.clientY; cv.setPointerCapture(e.pointerId);
+  });
+  cv.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var k = 0.0042 * (fovDeg() / BASE_FOV);
+    view.lon -= (e.clientX - px) * k * 2.2;
+    view.lat = Math.max(-1.45, Math.min(1.45, view.lat + (e.clientY - py) * k * 2.2));
+    px = e.clientX; py = e.clientY;
+    if (reduce) render();
+  });
+  cv.addEventListener('pointerup', function () { drag = false; });
+  cv.addEventListener('pointercancel', function () { drag = false; });
+
+  function setZoom(z) {
+    zoom = Math.max(1, Math.min(160, z));
+    document.getElementById('zoom').value = Math.log(zoom) / Math.log(160) * 100;
+    if (reduce) render();
+  }
+  cv.addEventListener('wheel', function (e) {
+    e.preventDefault(); setZoom(zoom * Math.exp(-e.deltaY * 0.0016));
+  }, { passive: false });
+
+  cv.addEventListener('keydown', function (e) {
+    var k = e.key, s = 0.07 * (fovDeg() / BASE_FOV) * 6;
+    if (k === 'ArrowLeft') view.lon -= s;
+    else if (k === 'ArrowRight') view.lon += s;
+    else if (k === 'ArrowUp') view.lat = Math.min(1.45, view.lat + s);
+    else if (k === 'ArrowDown') view.lat = Math.max(-1.45, view.lat - s);
+    else if (k === '+' || k === '=') setZoom(zoom * 1.35);
+    else if (k === '-') setZoom(zoom / 1.35);
+    else return;
+    e.preventDefault(); if (reduce) render();
+  });
+
+  document.getElementById('zoom').addEventListener('input', function (e) {
+    setZoom(Math.exp(+e.target.value / 100 * Math.log(160)));
+  });
+  ['grid', 'grs', 'light'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', function (e) {
+      opts[id] = e.target.checked; if (reduce) render();
+    });
+  });
+  document.getElementById('reset').addEventListener('click', function () {
+    view.lat = 0.06; view.lon = 0; setZoom(1); render();
+  });
+
+  addEventListener('resize', resize);
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) stop(); else start();
+  });
+
+  resize();
+  start();
+})();
+</script>

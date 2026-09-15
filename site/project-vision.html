@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autonomous Vision-Guided Robot Platform · Yuvraj Chahal</title>
+<meta name="description" content="A HiWonder Raspberry Pi robot co-programmed in Python — OpenCV and YOLO detection turned into PWM servo commands, with ultrasonic sensing and depth estimation underneath for autonomous navigation.">
+<meta name="theme-color" content="#0F0906">
+<meta property="og:title" content="Autonomous Vision-Guided Robot Platform · Yuvraj Chahal">
+<meta property="og:description" content="A HiWonder Raspberry Pi robot co-programmed in Python — OpenCV and YOLO detection turned into PWM servo commands, with ultrasonic sensing and depth estimation underneath for autonomous navigation.">
+<meta property="og:type" content="website">
+<!-- og:image must be an absolute URL once deployed, e.g. https://yourdomain/assets/og.jpg -->
+<meta property="og:image" content="assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="assets/css/site.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body class="page-project">
+<a class="sr-only skip-link" href="#main">Skip to content</a>
+
+<div class="jupiter-stage" aria-hidden="true">
+  <canvas class="jupiter" role="presentation" aria-hidden="true"></canvas>
+  <div class="jupiter-fallback"></div>
+  <div class="veil"></div>
+  <div class="bleed"></div>
+  <div class="grain"></div>
+</div>
+
+<div class="page">
+
+  <header class="nav">
+    <a href="index.html" class="nav__brand" data-nav>
+      <span class="nav__mark"></span>
+      Yuvraj Chahal
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="index.html#projects" class="link" data-nav><span aria-hidden="true">← </span>All projects</a>
+      <a href="about.html" class="link link--hide-sm" data-nav>About</a>
+      <a href="uploads/YuvrajChahalResume.pdf" download class="btn btn--primary btn--sm">Resume <span aria-hidden="true">↓</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ================= HERO ================= -->
+    <section class="phero wrap" aria-labelledby="title" data-rail="Intro">
+      <div class="phero__meta">
+        <span class="eyebrow num">Project 06 / 06</span>
+      </div>
+      <h1 id="title" class="display phero__title">Autonomous<br>Vision-Guided<br>Robot Platform</h1>
+      <p class="lede phero__lede">
+        A HiWonder Raspberry Pi robot co-programmed in Python — OpenCV and YOLO detection turned into PWM servo commands, with ultrasonic sensing and depth estimation underneath for autonomous navigation.
+      </p>
+      <div class="meta">
+        <div>
+          <div class="meta__key">Year</div>
+          <div class="meta__val">Sep — Dec 2025</div>
+        </div>
+        <div>
+          <div class="meta__key">Context</div>
+          <div class="meta__val">MSE 112 · Mechatronic Design Studio I</div>
+        </div>
+        <div>
+          <div class="meta__key">Role</div>
+          <div class="meta__val">Vision &amp; controls</div>
+        </div>
+        <div>
+          <div class="meta__key">Stack</div>
+          <div class="meta__val">Python · OpenCV · YOLO · Raspberry Pi</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FIGURE ================= -->
+    <section class="wrap reveal" data-rail="Diagram">
+      <div class="band">
+        <svg viewBox="0 0 1400 440" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+        <g class="fig-grid"><line x1="0" y1="110" x2="1400" y2="110"/><line x1="0" y1="220" x2="1400" y2="220"/><line x1="0" y1="330" x2="1400" y2="330"/><line x1="280" y1="0" x2="280" y2="440"/><line x1="560" y1="0" x2="560" y2="440"/><line x1="840" y1="0" x2="840" y2="440"/><line x1="1120" y1="0" x2="1120" y2="440"/></g>
+        <rect class="fig-ink" x="170" y="76" width="600" height="288" fill="none" stroke-width="1.5"/>
+        <g class="fig-ink" stroke-width=".8" opacity=".45"><line x1="230" y1="364" x2="230" y2="354"/><line x1="290" y1="364" x2="290" y2="354"/><line x1="350" y1="364" x2="350" y2="354"/><line x1="410" y1="364" x2="410" y2="354"/><line x1="470" y1="364" x2="470" y2="354"/><line x1="530" y1="364" x2="530" y2="354"/><line x1="590" y1="364" x2="590" y2="354"/><line x1="650" y1="364" x2="650" y2="354"/><line x1="710" y1="364" x2="710" y2="354"/><line x1="170" y1="124" x2="180" y2="124"/><line x1="170" y1="172" x2="180" y2="172"/><line x1="170" y1="220" x2="180" y2="220"/><line x1="170" y1="268" x2="180" y2="268"/><line x1="170" y1="316" x2="180" y2="316"/></g>
+        <g class="fig-ink" fill="none" stroke-width="1.6" opacity=".5"><circle cx="490" cy="196" r="26"/><path d="M432 298a58 58 0 0 1 116 0"/></g>
+        <rect class="fig-stroke" x="390" y="148" width="200" height="150" fill="none" stroke-width="1.5" opacity=".5" stroke-dasharray="6 6"/>
+        <g class="fig-stroke" fill="none" stroke-width="2.5"><path d="M390 178V148h30"/><path d="M560 148h30v30"/><path d="M590 268v30h-30"/><path d="M420 298h-30v-30"/></g>
+        <g class="fig-stroke" fill="none" stroke-width="1.5" opacity=".4" stroke-dasharray="7 7"><path d="M490 223V364"/><path d="M490 223H170"/></g>
+        <g class="fig-stroke" stroke-width="2.5"><line x1="490" y1="356" x2="490" y2="372"/><line x1="162" y1="223" x2="178" y2="223"/></g>
+        <g class="fig-stroke" stroke-width="1.6"><line x1="460" y1="223" x2="520" y2="223"/><line x1="490" y1="193" x2="490" y2="253"/></g>
+        <circle class="fig-stroke" cx="490" cy="223" r="17" fill="none" stroke-width="1" opacity=".55" stroke-dasharray="4 4"/>
+        <circle class="fig-fill" cx="490" cy="223" r="4.5"/>
+        <path class="fig-stroke" d="M800 220h80v-34h20v34h28v-34h20v34h28v-34h20v34h76" fill="none" stroke-width="2"/>
+        <path class="fig-stroke" d="M1060 212l12 8-12 8" fill="none" stroke-width="2"/>
+        <g class="fig-ink" fill="none" stroke-width="1.6"><rect x="1120" y="294" width="200" height="44" rx="6"/><circle cx="1165" cy="356" r="18"/><circle cx="1275" cy="356" r="18"/></g>
+        <line class="fig-ink" x1="1100" y1="376" x2="1340" y2="376" stroke-width="1" opacity=".35"/>
+        <g class="fig-stroke" fill="none" stroke-width="2.5"><path d="M1220 294L1150 179L1265 114"/></g>
+        <g class="fig-stroke fig-bg" stroke-width="2"><circle cx="1220" cy="294" r="7"/><circle cx="1150" cy="179" r="7"/></g>
+        <circle class="fig-fill" cx="1265" cy="114" r="5"/>
+        <g class="fig-stroke" fill="none" stroke-width="1.5" opacity=".42" stroke-dasharray="8 10"><path d="M1120 203.9A134.6 134.6 0 0 1 1215.3 159.5"/><path d="M1225.8 70.8A132.1 132.1 0 0 1 1280.8 160.6"/></g>
+        <g class="fig-stroke" fill="none" stroke-width="2" opacity=".6"><path d="M1284.9 146.9L1280.8 160.6L1273.1 148.6"/></g>
+        </svg>
+        <div class="band__cap">Fig. 06 — Detection frame · Centroid → servo command</div>
+        <div class="band__tag">YOLO · Visual servoing</div>
+      </div>
+    </section>
+
+    <!-- ================= CONTENT ================= -->
+    <section class="section wrap" data-rail="Detail">
+
+      <div class="block reveal">
+        <h2 class="eyebrow eyebrow--accent eyebrow--dash">Overview</h2>
+        <div class="prose">
+          <p>A robot that sees is only interesting once what it sees turns into movement. On a HiWonder Raspberry Pi platform I co-programmed in Python, I built that path end to end: OpenCV pipelines that find faces and objects in a live video stream, a YOLO detector whose bounding-box centroid becomes a PWM servo command, ultrasonic sensing and depth estimation underneath it for obstacle avoidance, and sensor-polling loops and interrupt-driven input handling at the firmware level so the robot kept its footing through a cluttered course.</p>
+        </div>
+      </div>
+
+      <div class="block reveal">
+        <h2 class="eyebrow eyebrow--accent eyebrow--dash">What I built</h2>
+        <div class="features">
+          <div class="feature">
+            <span class="feature__num">01</span>
+            <div>
+              <h3 class="feature__title">Vision-to-actuation pipeline</h3>
+              <p class="feature__body">Built computer vision pipelines in OpenCV for face and object detection on a live video stream, then closed the loop with YOLO — bounding-box and centroid coordinates mapped onto PWM servo commands, with inverse kinematics turning those coordinates into coordinated arm and chassis motion for real-time visual servoing.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature__num">02</span>
+            <div>
+              <h3 class="feature__title">Autonomous obstacle avoidance</h3>
+              <p class="feature__body">Co-programmed real-time obstacle avoidance in Python using ultrasonic sensing and depth estimation, letting the robot navigate a cluttered course on its own rather than along a fixed path.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature__num">03</span>
+            <div>
+              <h3 class="feature__title">GPIO, PWM &amp; multi-axis motor control</h3>
+              <p class="feature__body">Interfaced expansion boards with the Raspberry Pi's GPIO and configured PWM signals for multi-axis servo and brushless DC motor control, getting the arm and the drive train to move together.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature__num">04</span>
+            <div>
+              <h3 class="feature__title">Firmware-level Python</h3>
+              <p class="feature__body">Wrote firmware-level Python covering sensor-polling loops and interrupt-driven input handling, reducing the sensor events missed during continuous operation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block reveal">
+        <h2 class="eyebrow eyebrow--accent eyebrow--dash">Stack</h2>
+        <div class="chips">
+          <span class="chip">Python</span>
+          <span class="chip">OpenCV</span>
+          <span class="chip">YOLO</span>
+          <span class="chip">Raspberry Pi</span>
+          <span class="chip">GPIO &amp; PWM</span>
+          <span class="chip">Inverse kinematics</span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= NEXT ================= -->
+  <footer class="next wrap" data-rail="Next">
+    <a class="next__link" data-nav href="project-autocurve.html">
+      <span>
+        <span class="eyebrow num">Back to start — 01</span>
+        <span class="next__title">AutoCurve Assistant</span>
+      </span>
+      <span class="next__arrow" aria-hidden="true">→</span>
+    </a>
+  </footer>
+
+</div>
+
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>

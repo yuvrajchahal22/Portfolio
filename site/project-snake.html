@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Snake — Embedded C · Yuvraj Chahal</title>
+<meta name="description" content="A full-featured multiplayer Snake written in C for an embedded target — game loop, collision, persistent high scores — built by a team I led in MSE 152.">
+<meta name="theme-color" content="#0F0906">
+<meta property="og:title" content="Snake — Embedded C · Yuvraj Chahal">
+<meta property="og:description" content="A full-featured multiplayer Snake written in C for an embedded target — game loop, collision, persistent high scores — built by a team I led in MSE 152.">
+<meta property="og:type" content="website">
+<!-- og:image must be an absolute URL once deployed, e.g. https://yourdomain/assets/og.jpg -->
+<meta property="og:image" content="assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="assets/css/site.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body class="page-project">
+<a class="sr-only skip-link" href="#main">Skip to content</a>
+
+<div class="jupiter-stage" aria-hidden="true">
+  <canvas class="jupiter" role="presentation" aria-hidden="true"></canvas>
+  <div class="jupiter-fallback"></div>
+  <div class="veil"></div>
+  <div class="bleed"></div>
+  <div class="grain"></div>
+</div>
+
+<div class="page">
+
+  <header class="nav">
+    <a href="index.html" class="nav__brand" data-nav>
+      <span class="nav__mark"></span>
+      Yuvraj Chahal
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="index.html#projects" class="link" data-nav><span aria-hidden="true">← </span>All projects</a>
+      <a href="about.html" class="link link--hide-sm" data-nav>About</a>
+      <a href="uploads/YuvrajChahalResume.pdf" download class="btn btn--primary btn--sm">Resume <span aria-hidden="true">↓</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ================= HERO ================= -->
+    <section class="phero wrap" aria-labelledby="title" data-rail="Intro">
+      <div class="phero__meta">
+        <span class="eyebrow num">Project 04 / 06</span>
+        <span class="chip">Team lead</span>
+      </div>
+      <h1 id="title" class="display phero__title">Snake —<br>Embedded C</h1>
+      <p class="lede phero__lede">
+        A full-featured multiplayer Snake written in C for an embedded target — game loop, collision, persistent high scores — built by a team I led in MSE 152.
+      </p>
+      <div class="meta">
+        <div>
+          <div class="meta__key">Year</div>
+          <div class="meta__val">Jan — Apr 2026</div>
+        </div>
+        <div>
+          <div class="meta__key">Context</div>
+          <div class="meta__val">MSE 152 · Team project</div>
+        </div>
+        <div>
+          <div class="meta__key">Role</div>
+          <div class="meta__val">Team lead · Primary contributor</div>
+        </div>
+        <div>
+          <div class="meta__key">Stack</div>
+          <div class="meta__val">C · Embedded target</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FIGURE ================= -->
+    <section class="wrap reveal" data-rail="Diagram">
+      <div class="band">
+        <svg viewBox="0 0 1400 440" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+        <line x1="0" y1="88" x2="1400" y2="88" stroke="rgba(242,237,228,.05)"/>
+        <line x1="0" y1="176" x2="1400" y2="176" stroke="rgba(242,237,228,.05)"/>
+        <line x1="0" y1="264" x2="1400" y2="264" stroke="rgba(242,237,228,.05)"/>
+        <line x1="0" y1="352" x2="1400" y2="352" stroke="rgba(242,237,228,.05)"/>
+        <line x1="175" y1="0" x2="175" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <line x1="350" y1="0" x2="350" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <line x1="525" y1="0" x2="525" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <line x1="700" y1="0" x2="700" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <line x1="875" y1="0" x2="875" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <line x1="1050" y1="0" x2="1050" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <line x1="1225" y1="0" x2="1225" y2="440" stroke="rgba(242,237,228,.05)"/>
+        <rect x="310" y="264" width="44" height="44" fill="rgba(224,167,86,.25)"/>
+        <rect x="358" y="264" width="44" height="44" fill="rgba(224,167,86,.35)"/>
+        <rect x="406" y="264" width="44" height="44" fill="rgba(224,167,86,.45)"/>
+        <rect x="406" y="216" width="44" height="44" fill="rgba(224,167,86,.55)"/>
+        <rect x="406" y="168" width="44" height="44" fill="rgba(224,167,86,.65)"/>
+        <rect x="454" y="168" width="44" height="44" fill="rgba(224,167,86,.8)"/>
+        <rect x="502" y="168" width="44" height="44" fill="#E0A756"/>
+        <rect x="850" y="168" width="44" height="44" fill="none" stroke="#E0A756" stroke-width="2.5"/>
+        <rect x="834" y="152" width="76" height="76" fill="none" stroke="rgba(224,167,86,.35)" stroke-width="1.5" stroke-dasharray="5 5"/>
+        <rect x="1136" y="308" width="44" height="44" fill="rgba(242,237,228,.22)"/>
+        <rect x="1184" y="308" width="44" height="44" fill="rgba(242,237,228,.32)"/>
+        <rect x="1184" y="260" width="44" height="44" fill="rgba(242,237,228,.45)"/>
+        </svg>
+        <div class="band__cap">Fig. 04 — Game state · Player 1 · Player 2 · Food</div>
+        <div class="band__tag">Tick = ΔT · Input queue active</div>
+      </div>
+    </section>
+
+    <!-- ================= CONTENT ================= -->
+    <section class="section wrap" data-rail="Detail">
+
+      <div class="block reveal">
+        <h2 class="eyebrow eyebrow--accent eyebrow--dash">Overview</h2>
+        <div class="prose">
+          <p>Snake sounds simple until you build it properly on an embedded target: fixed memory, real-time input, and no OS to catch you. Our version shipped with multiplayer, level progression, delta-time ticks and persistent high scores — and I was responsible for both the hardest code and the team that built the rest.</p>
+        </div>
+      </div>
+
+      <div class="block reveal">
+        <h2 class="eyebrow eyebrow--accent eyebrow--dash">Leading the team</h2>
+        <div>
+          <div class="prose">
+            <p>I served as team lead and primary contributor — which meant owning the architecture, splitting the work into pieces teammates could run with, and keeping the codebase healthy while we all committed to it.</p>
+          </div>
+          <div class="block__sub">
+            <h3 class="h-3">Owning the core</h3>
+            <div class="prose">
+              <p>Implemented the game loop, collision detection, level progression and delta-time tick control — the spine everything else plugged into.</p>
+            </div>
+          </div>
+          <div class="block__sub">
+            <h3 class="h-3">Delegating &amp; unblocking</h3>
+            <div class="prose">
+              <p>Split features into clean interfaces — screens, scoring, storage — so teammates could build in parallel against the core without collisions.</p>
+            </div>
+          </div>
+          <div class="block__sub">
+            <h3 class="h-3">Git discipline</h3>
+            <div class="prose">
+              <p>Ran the same professional workflow as a software team: feature branches, pull-request reviews and shared code standards on every merge.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block reveal">
+        <h2 class="eyebrow eyebrow--accent eyebrow--dash">Engineering highlights</h2>
+        <div class="features">
+          <div class="feature">
+            <span class="feature__num">01</span>
+            <div>
+              <h3 class="feature__title">Input-queue buffer</h3>
+              <p class="feature__body">Designed a queue that eliminates dropped keystrokes and enables smooth multi-key sequences — fast direction changes register exactly as entered.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature__num">02</span>
+            <div>
+              <h3 class="feature__title">Multiplayer with independent state</h3>
+              <p class="feature__body">Built a multiplayer system with independent lives and per-player score tracking running in the same fixed-tick loop.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature__num">03</span>
+            <div>
+              <h3 class="feature__title">Persistent high scores</h3>
+              <p class="feature__body">Co-developed a high-score system that serializes scores to non-volatile storage, surviving power cycles on the embedded target.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature__num">04</span>
+            <div>
+              <h3 class="feature__title">Live-state screens</h3>
+              <p class="feature__body">Dynamic pause, start and game-over screens rendered directly from live game state — no separate UI state machine to fall out of sync.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block reveal">
+        <h2 class="eyebrow eyebrow--accent eyebrow--dash">Stack</h2>
+        <div class="chips">
+          <span class="chip">C</span>
+          <span class="chip">Embedded target</span>
+          <span class="chip">Delta-time loop</span>
+          <span class="chip">Non-volatile storage</span>
+          <span class="chip">Git · PR workflow</span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= NEXT ================= -->
+  <footer class="next wrap" data-rail="Next">
+    <a class="next__link" data-nav href="project-brushless.html">
+      <span>
+        <span class="eyebrow num">Next project — 05</span>
+        <span class="next__title">Brushless DC Motor Build</span>
+      </span>
+      <span class="next__arrow" aria-hidden="true">→</span>
+    </a>
+  </footer>
+
+</div>
+
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>

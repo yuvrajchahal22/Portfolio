@@ -1,0 +1,338 @@
+<title>Lensed Grid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ground:#0B0C0E; --panel:#0D0F11; --ink:#E9ECEA; --dim:#98A0A6;
+    --faint:#5E666D; --accent:#6FD9E8; --rule:rgba(233,236,234,.12);
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:'Space Grotesk',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--sans);
+       padding-inline:clamp(16px,4vw,44px);padding-block:0;margin:0}
+  .wrap{max-width:1180px;margin:0 auto}
+
+  header{padding-block:clamp(26px,5vw,46px) 20px;display:flex;flex-wrap:wrap;
+         gap:18px 32px;align-items:flex-end;justify-content:space-between}
+  h1{font-size:clamp(30px,5vw,52px);font-weight:700;letter-spacing:-.03em;margin:0;
+     line-height:1;text-wrap:balance}
+  .dek{color:var(--dim);font-size:15px;line-height:1.55;margin:12px 0 0;max-width:56ch}
+  .stamp{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--faint);
+         text-align:right;line-height:1.9}
+  .stamp b{color:var(--accent);font-weight:500}
+
+  .stage{position:relative;border:1px solid var(--rule);background:#08090B;
+         height:clamp(400px,68vh,640px);overflow:hidden;touch-action:none}
+  canvas{display:block;width:100%;height:100%;cursor:crosshair;outline:none}
+  canvas:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+  .telemetry{position:absolute;left:16px;bottom:16px;font-family:var(--mono);font-size:11px;
+             letter-spacing:.1em;color:var(--faint);background:rgba(11,12,14,.72);
+             backdrop-filter:blur(8px);border:1px solid var(--rule);padding:12px 14px;
+             display:grid;grid-template-columns:auto auto;gap:5px 18px;
+             font-variant-numeric:tabular-nums;pointer-events:none;max-width:calc(100% - 32px)}
+  .telemetry b{color:var(--ink);font-weight:500;text-align:right}
+  .telemetry .hl{color:var(--accent)}
+  .hint{position:absolute;right:16px;top:16px;font-family:var(--mono);font-size:10px;
+        letter-spacing:.14em;color:var(--faint);pointer-events:none;text-align:right;line-height:1.8}
+
+  .controls{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;
+            border:1px solid var(--rule);border-top:none;padding:14px 16px;background:var(--panel)}
+  .ctl{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;
+       letter-spacing:.12em;color:var(--faint)}
+  .ctl input[type=range]{width:132px;accent-color:var(--accent);background:transparent}
+  .ctl input[type=checkbox]{accent-color:var(--accent);width:14px;height:14px}
+  .ctl label{cursor:pointer;color:var(--faint)}
+  .ctl input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .seg{display:flex;border:1px solid var(--rule)}
+  .seg button{font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:6px 12px;
+              background:transparent;color:var(--faint);border:none;cursor:pointer}
+  .seg button[aria-pressed=true]{background:var(--ink);color:var(--ground)}
+  .seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));
+         gap:28px 40px;padding-block:44px 16px}
+  .notes h2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--accent);
+            margin:0 0 10px;font-weight:500}
+  .notes p{margin:0;color:var(--dim);font-size:14px;line-height:1.65}
+  .notes .k{color:var(--ink)}
+
+  .math{border-top:1px solid var(--rule);margin-top:28px;padding-block:28px 56px}
+  .math h2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--faint);
+           margin:0 0 16px;font-weight:500}
+  pre{font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--dim);margin:0;
+      overflow-x:auto;padding-bottom:6px}
+  pre b{color:var(--ink);font-weight:500}
+  .math p{color:var(--faint);font-size:12.5px;font-family:var(--mono);letter-spacing:.06em;
+          line-height:1.8;margin:18px 0 0;max-width:70ch}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Lensed Grid</h1>
+      <p class="dek">A point mass bending a 56&nbsp;px grid — the same grid your site
+        already uses as a backdrop. Real thin-lens general relativity, not a radial
+        distortion filter. Move the pointer to drag the mass.</p>
+    </div>
+    <div class="stamp">
+      MODEL <b>POINT MASS · THIN LENS</b><br>
+      D<sub>L</sub> 1.0 Gpc · D<sub>S</sub> 2.0 Gpc<br>
+      RENDER <b>VECTOR / CANVAS 2D</b>
+    </div>
+  </header>
+
+  <div class="stage">
+    <canvas id="sky" tabindex="0" role="img"
+      aria-label="Interactive gravitational lensing simulation. A grid of lines is bent around a point mass, forming an Einstein ring with a second inverted image inside it. Arrow keys move the lens, plus and minus keys change its mass."></canvas>
+    <div class="hint">DRAG TO MOVE MASS<br>SCROLL TO CHANGE MASS</div>
+    <div class="telemetry" id="telemetry" aria-live="off"></div>
+  </div>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="mass">MASS</label>
+      <input type="range" id="mass" min="28" max="190" value="92" step="1">
+    </div>
+    <div class="ctl">
+      <span>INTENSITY</span>
+      <div class="seg" role="group" aria-label="Line intensity">
+        <button type="button" id="int-demo" aria-pressed="true">DEMO</button>
+        <button type="button" id="int-bg" aria-pressed="false">AS BACKGROUND</button>
+      </div>
+    </div>
+    <div class="ctl"><input type="checkbox" id="ring" checked><label for="ring">EINSTEIN RING</label></div>
+    <div class="ctl"><input type="checkbox" id="inner" checked><label for="inner">INNER IMAGE</label></div>
+    <div class="ctl"><input type="checkbox" id="probe" checked><label for="probe">SOURCE PROBE</label></div>
+  </div>
+
+  <div class="notes">
+    <div>
+      <h2>OUTER IMAGE</h2>
+      <p>Far from the mass the grid is untouched. Close in, every line is pushed
+        <span class="k">outward</span> and wraps around the ring. Deflection falls off as
+        <span class="k">1/θ</span>, so the effect fades to nothing at the edges on its own —
+        which is what makes it survivable behind body text.</p>
+    </div>
+    <div>
+      <h2>INNER IMAGE</h2>
+      <p>A point lens produces <span class="k">two</span> images of everything. The second is
+        inverted and compressed inside the Einstein radius — a mirrored copy of the entire
+        plane, folded into the ring. This is the part almost nobody renders, and the reason
+        the effect looks unfamiliar rather than like a warp filter.</p>
+    </div>
+    <div>
+      <h2>SOURCE PROBE</h2>
+      <p>The two accent dots are one source, imaged twice. Dot area tracks each image's
+        <span class="k">magnification</span>. As the source crosses behind the mass the pair
+        stretches toward a full ring and magnification climbs — the geometry behind real
+        microlensing surveys.</p>
+    </div>
+  </div>
+
+  <div class="math">
+    <h2>THE ENTIRE SIMULATION</h2>
+<pre><b>θ<sub>E</sub></b>  = √( 4GM/c² · D<sub>LS</sub>/(D<sub>L</sub>·D<sub>S</sub>) )        Einstein radius
+<b>β</b>   = θ − θ<sub>E</sub>²/θ                        lens equation
+<b>θ±</b>  = ½( β ± √(β² + 4θ<sub>E</sub>²) )            the two images
+<b>μ±</b>  = ½[ (u²+2)/(u√(u²+4)) ± 1 ]     magnification,  u = β/θ<sub>E</sub></pre>
+    <p>Four closed-form equations. No solver, no timestep, no ephemeris data — every frame
+      is evaluated directly. Grid vertices are transformed as vectors rather than pixels,
+      so lines stay a crisp 1&nbsp;px and the whole thing runs in Canvas 2D with no WebGL
+      and no dependencies.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var cv = document.getElementById('sky'), ctx = cv.getContext('2d');
+  var tel = document.getElementById('telemetry');
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var SPACING = 56, ARCSEC_FOV = 24, MSUN_K = 1.0447e22, RAD = 4.8481e-6;
+  var W = 0, H = 0, dpr = 1;
+  var tE = 92, lens = { x: 0, y: 0 }, target = { x: 0, y: 0 }, pointerIn = false;
+  var opts = { ring: true, inner: true, probe: true, bg: false };
+  var t0 = performance.now(), raf = 0;
+
+  function resize() {
+    var r = cv.getBoundingClientRect();
+    W = r.width; H = r.height;
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (!lens.x) { lens.x = target.x = W * 0.42; lens.y = target.y = H * 0.5; }
+    draw(performance.now());
+  }
+
+  // Thin-lens point-mass map. Returns the unit vector to the source and both image radii.
+  function map(sx, sy) {
+    var dx = sx - lens.x, dy = sy - lens.y;
+    var b = Math.sqrt(dx * dx + dy * dy);
+    if (b < 1e-6) return null;
+    var tE2 = tE * tE;
+    var tp = 0.5 * (b + Math.sqrt(b * b + 4 * tE2));
+    return { ux: dx / b, uy: dy / b, b: b, tp: tp, tm: tE2 / tp };
+  }
+
+  // Walks one source-plane gridline, mapping each sample to an image-plane point.
+  // Step size tightens near the lens where the mapping stretches hardest.
+  function line(vertical, fixed, from, to, outer, maxJump) {
+    var prevX = null, prevY = null, t = from;
+    while (t <= to) {
+      var sx = vertical ? fixed : t, sy = vertical ? t : fixed;
+      var m = map(sx, sy), px, py, ok = !!m;
+      if (m) {
+        if (outer) { px = lens.x + m.ux * m.tp; py = lens.y + m.uy * m.tp; }
+        else if (m.tm < 1.1) { ok = false; }
+        else { px = lens.x - m.ux * m.tm; py = lens.y - m.uy * m.tm; }
+      }
+      if (ok) {
+        if (prevX === null || Math.abs(px - prevX) + Math.abs(py - prevY) > maxJump) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+        prevX = px; prevY = py;
+      } else prevX = null;
+      t += Math.min(15, Math.max(2, (m ? m.b : 200) * 0.12));
+    }
+  }
+
+  function grid(outer, maxJump) {
+    var pad = 260, k;
+    ctx.beginPath();
+    for (k = Math.floor(-pad / SPACING); k <= Math.ceil((W + pad) / SPACING); k++)
+      line(true, k * SPACING, -pad, H + pad, outer, maxJump);
+    for (k = Math.floor(-pad / SPACING); k <= Math.ceil((H + pad) / SPACING); k++)
+      line(false, k * SPACING, -pad, W + pad, outer, maxJump);
+    ctx.stroke();
+  }
+
+  function draw(now) {
+    var a = opts.bg ? 0.34 : 1;
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineWidth = 1;
+    ctx.lineJoin = ctx.lineCap = 'round';
+
+    ctx.strokeStyle = 'rgba(233,236,234,' + (0.13 * a).toFixed(3) + ')';
+    grid(true, 70);
+
+    if (opts.inner) {
+      ctx.strokeStyle = 'rgba(111,217,232,' + (0.20 * a).toFixed(3) + ')';
+      grid(false, 26);
+    }
+
+    if (opts.ring) {
+      ctx.strokeStyle = 'rgba(111,217,232,' + (0.42 * a).toFixed(3) + ')';
+      ctx.beginPath();
+      ctx.arc(lens.x, lens.y, tE, 0, 6.2832);
+      ctx.stroke();
+    }
+
+    // Lens marker: a crosshair, never a glowing body.
+    ctx.strokeStyle = 'rgba(233,236,234,' + (0.30 * a).toFixed(3) + ')';
+    ctx.beginPath();
+    ctx.moveTo(lens.x - 6, lens.y); ctx.lineTo(lens.x + 6, lens.y);
+    ctx.moveTo(lens.x, lens.y - 6); ctx.lineTo(lens.x, lens.y + 6);
+    ctx.stroke();
+
+    var u = null, muTot = 0, beta = 0;
+    if (opts.probe) {
+      var ph = reduce ? 0.7 : (now - t0) / 4200;
+      var sx = lens.x + Math.cos(ph) * tE * 1.15;
+      var sy = lens.y + Math.sin(ph * 1.7) * tE * 0.62;
+      var m = map(sx, sy);
+      if (m) {
+        beta = m.b; u = beta / tE;
+        muTot = (u * u + 2) / (u * Math.sqrt(u * u + 4));
+        var mp = 0.5 * (muTot + 1), mm = 0.5 * (muTot - 1);
+        ctx.fillStyle = 'rgba(111,217,232,' + (0.92 * a).toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.arc(lens.x + m.ux * m.tp, lens.y + m.uy * m.tp, Math.min(9, 2 + Math.sqrt(mp) * 1.7), 0, 6.2832);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(lens.x - m.ux * m.tm, lens.y - m.uy * m.tm, Math.min(9, 2 + Math.sqrt(Math.abs(mm)) * 1.7), 0, 6.2832);
+        ctx.fill();
+      }
+    }
+
+    var perPx = ARCSEC_FOV / Math.max(W, 1);
+    var tEas = tE * perPx, mass = Math.pow(tEas * RAD, 2) * MSUN_K / 1e12;
+    tel.innerHTML =
+      'EINSTEIN RADIUS<b class="hl">' + tEas.toFixed(2) + '&Prime;</b>' +
+      'LENS MASS<b>' + mass.toFixed(2) + ' ×10<sup>12</sup> M<sub>&#9737;</sub></b>' +
+      (u ? 'SOURCE OFFSET<b>' + (beta * perPx).toFixed(2) + '&Prime;</b>' +
+           'MAGNIFICATION<b>' + muTot.toFixed(2) + '×</b>' +
+           'IMAGE SEP<b>' + (Math.sqrt(beta * beta + 4 * tE * tE) * perPx).toFixed(2) + '&Prime;</b>' : '') +
+      'FIELD<b>' + ARCSEC_FOV.toFixed(1) + '&Prime;</b>';
+  }
+
+  function frame(now) {
+    if (!pointerIn && !reduce) {
+      var s = (now - t0) / 1000;
+      target.x = W * (0.5 + 0.21 * Math.cos(s * 0.23));
+      target.y = H * (0.5 + 0.17 * Math.sin(s * 0.31));
+    }
+    lens.x += (target.x - lens.x) * 0.10;
+    lens.y += (target.y - lens.y) * 0.10;
+    draw(now);
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start() { if (!raf) raf = requestAnimationFrame(frame); }
+  function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+
+  cv.addEventListener('pointermove', function (e) {
+    var r = cv.getBoundingClientRect();
+    pointerIn = true; target.x = e.clientX - r.left; target.y = e.clientY - r.top;
+    if (reduce) draw(performance.now());
+  });
+  cv.addEventListener('pointerleave', function () { pointerIn = false; });
+  cv.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    tE = Math.max(28, Math.min(190, tE - e.deltaY * 0.12));
+    document.getElementById('mass').value = tE;
+    if (reduce) draw(performance.now());
+  }, { passive: false });
+  cv.addEventListener('keydown', function (e) {
+    var k = e.key, step = 14;
+    if (k === 'ArrowLeft') target.x -= step; else if (k === 'ArrowRight') target.x += step;
+    else if (k === 'ArrowUp') target.y -= step; else if (k === 'ArrowDown') target.y += step;
+    else if (k === '+' || k === '=') tE = Math.min(190, tE + 8);
+    else if (k === '-') tE = Math.max(28, tE - 8);
+    else return;
+    e.preventDefault(); pointerIn = true;
+    document.getElementById('mass').value = tE;
+    if (reduce) draw(performance.now());
+  });
+
+  document.getElementById('mass').addEventListener('input', function (e) {
+    tE = +e.target.value; if (reduce) draw(performance.now());
+  });
+  ['ring', 'inner', 'probe'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', function (e) {
+      opts[id] = e.target.checked; if (reduce) draw(performance.now());
+    });
+  });
+  var bDemo = document.getElementById('int-demo'), bBg = document.getElementById('int-bg');
+  function intensity(bg) {
+    opts.bg = bg;
+    bDemo.setAttribute('aria-pressed', String(!bg));
+    bBg.setAttribute('aria-pressed', String(bg));
+    if (reduce) draw(performance.now());
+  }
+  bDemo.addEventListener('click', function () { intensity(false); });
+  bBg.addEventListener('click', function () { intensity(true); });
+
+  addEventListener('resize', resize);
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) stop(); else if (!reduce) start();
+  });
+
+  resize();
+  if (reduce) draw(performance.now()); else start();
+})();
+</script>

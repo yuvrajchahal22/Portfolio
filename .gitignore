@@ -1,0 +1,12 @@
+# Only site/, prototypes/, and README.md are tracked — everything else is
+# working material kept locally and intentionally excluded from the repo.
+/*
+!/site/
+!/prototypes/
+!/README.md
+!/.gitignore
+
+# OS clutter (in case any excluded rule above ever gets narrowed)
+.DS_Store
+*.swp
+node_modules/
